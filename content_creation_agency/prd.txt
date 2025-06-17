@@ -1,0 +1,156 @@
+# Content Creation Agency
+
+---
+
+- **Purpose:** An AI-powered agency designed to analyze trends, YouTube performance, and generate optimized content ideas and scripts. The agency leverages data-driven insights to create engaging content that fills identified market gaps.
+
+- **Communication Flows:**
+    - **Between Agents:**
+        - **Example Flow:**
+            - **Content Manager -> YouTube Analyzer:** Request for channel and video performance analysis
+            - **YouTube Analyzer -> Content Manager:** Send performance analysis and content gap report
+            - **Content Manager -> Trend Analyzer:** Request trend analysis
+            - **Trend Analyzer -> Content Manager:** Send trend report and content opportunities
+    - **Agent to User Communication:** The Content Manager acts as the primary interface with the user, presenting content ideas and script drafts for approval.
+
+---
+
+## Content Manager
+
+### **Role within the Agency**
+Primary orchestrator that coordinates analysis requests, generates content ideas, and manages script creation based on insights from other agents.
+
+### Tools
+
+- **ContentIdeaGenerator:**
+    - **Description**: Generates creative content ideas using OpenAI's GPT-4 API based on trends and performance data
+    - **Inputs**:
+        - trends_data (dict) - Trend analysis data from Trend Analyzer
+        - performance_data (dict) - YouTube performance metrics
+    - **Validation**:
+        - Both input parameters must be valid dictionaries
+    - **Core Functions:** Process trend and performance data, generate relevant content ideas
+    - **APIs**: OpenAI API
+    - **Output**: JSON object containing content ideas with titles and descriptions
+
+- **ScriptWriter:**
+    - **Description**: Creates detailed script drafts in Markdown format
+    - **Inputs**:
+        - content_idea (dict) - Selected content idea with metadata
+        - target_length (int) - Desired script length in minutes
+    - **Validation**:
+        - content_idea must contain title and description
+        - target_length must be positive integer
+    - **Core Functions:** Generate script structure, write content sections
+    - **APIs**: OpenAI API
+    - **Output**: String containing the script in Markdown format
+
+- **ScriptEditor:**
+    - **Description**: Edits and refines script drafts based on suggestions
+    - **Inputs**:
+        - script_content (str) - Original script content
+        - edit_suggestions (list) - List of suggested changes
+    - **Validation**:
+        - script_content must not be empty
+        - edit_suggestions must be a non-empty list
+    - **Core Functions:** Apply edits, maintain formatting, improve flow
+    - **APIs**: OpenAI API
+    - **Output**: String containing the edited script
+
+---
+
+## Trend Analyzer Agent
+
+### **Role within the Agency**
+Analyzes current AI trends and identifies content opportunities through web scraping and keyword analysis.
+
+### Tools
+
+- **TavilySearchTool:**
+    - **Description**: Searches the web for latest AI trends using Tavily API
+    - **Inputs**:
+        - search_query (str) - Search terms for AI trends
+        - max_results (int) - Number of results to return
+    - **Validation**:
+        - search_query must not be empty
+        - max_results must be between 1 and 20
+    - **Core Functions:** Execute search, filter relevant results
+    - **APIs**: Tavily API
+    - **Output**: JSON object with search results
+
+- **KeywordExtractor:**
+    - **Description**: Extracts and analyzes keywords from news articles using NLTK
+    - **Inputs**:
+        - article_text (str) - Text content of articles
+    - **Validation**:
+        - article_text must not be empty
+    - **Core Functions:** Process text, extract keywords, calculate frequency
+    - **APIs**: NLTK
+    - **Output**: List of extracted keywords with frequencies
+
+- **TrendAnalyzer:**
+    - **Description**: Analyzes keyword trends using pytrends
+    - **Inputs**:
+        - keywords (list) - List of keywords to analyze
+        - timeframe (str) - Time period for analysis
+    - **Validation**:
+        - keywords must be non-empty list
+        - timeframe must be valid pytrends format
+    - **Core Functions:** Fetch trend data, analyze patterns
+    - **APIs**: pytrends
+    - **Output**: JSON object with trend analysis results
+
+---
+
+## YouTube Analyzer Agent
+
+### **Role within the Agency**
+Analyzes YouTube channel performance, competitor content, and audience engagement to identify content opportunities.
+
+### Tools
+
+- **ChannelAnalyzer:**
+    - **Description**: Analyzes channel demographics and overall performance
+    - **Inputs**:
+        - channel_id (str) - YouTube channel ID
+    - **Validation**:
+        - channel_id must be valid YouTube format
+    - **Core Functions:** Fetch channel stats, analyze demographics
+    - **APIs**: YouTube Data API
+    - **Output**: JSON object with channel analytics
+
+- **VideoPerformanceAnalyzer:**
+    - **Description**: Assesses performance metrics of channel videos
+    - **Inputs**:
+        - channel_id (str) - YouTube channel ID
+        - max_videos (int) - Number of videos to analyze
+    - **Validation**:
+        - channel_id must be valid YouTube format
+        - max_videos must be positive integer
+    - **Core Functions:** Fetch video metrics, calculate performance scores
+    - **APIs**: YouTube Data API
+    - **Output**: JSON object with video performance metrics
+
+- **CompetitorAnalyzer:**
+    - **Description**: Analyzes competitor channels and content
+    - **Inputs**:
+        - competitor_ids (list) - List of competitor channel IDs
+        - metrics (list) - List of metrics to analyze
+    - **Validation**:
+        - competitor_ids must be non-empty list
+        - metrics must be valid YouTube metrics
+    - **Core Functions:** Compare metrics, identify patterns
+    - **APIs**: YouTube Data API
+    - **Output**: JSON object with competitor analysis
+
+- **CommentAnalyzer:**
+    - **Description**: Analyzes sentiment and topics in video comments
+    - **Inputs**:
+        - video_id (str) - YouTube video ID
+        - max_comments (int) - Number of comments to analyze
+    - **Validation**:
+        - video_id must be valid YouTube format
+        - max_comments must be positive integer
+    - **Core Functions:** Fetch comments, analyze sentiment
+    - **APIs**: YouTube Data API, NLTK
+    - **Output**: JSON object with comment analysis results 
