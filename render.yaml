@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: content-creation-agency
+    runtime: python
+    buildCommand: pip install -r content_creation_agency/requirements.txt && pip install -e .
+    startCommand: python content_creation_agency/production_app.py
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: YOUTUBE_API_KEY
+        sync: false
+      - key: TAVILY_API_KEY
+        sync: false
+      - key: GRADIO_SERVER_NAME
+        value: 0.0.0.0
+      - key: GRADIO_SERVER_PORT
+        value: 10000
+    healthCheckPath: /
+    autoDeploy: true 
