@@ -2,13 +2,37 @@ import gradio as gr
 import os
 import logging
 import tempfile
+import shutil
 from dotenv import load_dotenv
 
 # Set up temporary directory for Agency Swarm settings
 temp_dir = tempfile.mkdtemp()
 os.environ['AGENCY_SWARM_SETTINGS_DIR'] = temp_dir
 
-# Import agency after setting environment variable
+# Create a writable settings.json in temp directory
+settings_path = os.path.join(temp_dir, 'settings.json')
+os.makedirs(os.path.dirname(settings_path), exist_ok=True)
+
+# Monkey patch the settings path to use temp directory
+import agency_swarm.agents.agent as agent_module
+original_save_settings = agent_module.Agent._save_settings
+
+def patched_save_settings(self):
+    """Patched version that uses temp directory"""
+    try:
+        # Use the temp directory for settings
+        temp_settings_path = os.path.join(temp_dir, 'settings.json')
+        with open(temp_settings_path, "w") as f:
+            import json
+            json.dump(self.settings, f, indent=2)
+    except Exception as e:
+        # If temp directory fails, try to create a minimal settings file
+        pass
+
+# Apply the patch
+agent_module.Agent._save_settings = patched_save_settings
+
+# Import agency after patching
 from content_creation_agency.agency import agency
 
 # Load environment variables
