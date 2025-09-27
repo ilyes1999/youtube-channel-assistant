@@ -15,5 +15,7 @@ services:
         value: 0.0.0.0
       - key: GRADIO_SERVER_PORT
         value: 10000
+      - key: PORT
+        value: 10000
     healthCheckPath: /
     autoDeploy: true 

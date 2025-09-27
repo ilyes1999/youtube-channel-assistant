@@ -1,7 +1,14 @@
 import gradio as gr
 import os
 import logging
+import tempfile
 from dotenv import load_dotenv
+
+# Set up temporary directory for Agency Swarm settings
+temp_dir = tempfile.mkdtemp()
+os.environ['AGENCY_SWARM_SETTINGS_DIR'] = temp_dir
+
+# Import agency after setting environment variable
 from content_creation_agency.agency import agency
 
 # Load environment variables
@@ -108,13 +115,16 @@ with gr.Blocks(
     clear_btn.click(lambda: None, None, chatbot, queue=False)
 
 if __name__ == "__main__":
+    # Get port from environment variable (Render provides this)
+    port = int(os.environ.get("PORT", 7860))
+    
     # Production settings
     demo.launch(
         server_name="0.0.0.0",  # Allow external connections
-        server_port=7860,       # Default Gradio port
+        server_port=port,       # Use Render's port
         share=False,            # Set to True for temporary public link
         debug=False,            # Disable debug mode in production
         show_error=True,        # Show errors to users
         quiet=False,            # Show startup messages
-        inbrowser=True          # Open browser automatically
+        inbrowser=False        # Don't open browser in production
     ) 
