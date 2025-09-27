@@ -102,8 +102,7 @@ with gr.Blocks(
     chatbot = gr.Chatbot(
         height=600,
         show_label=False,
-        container=True,
-        type="messages"
+        container=True
     )
     
     with gr.Row():
