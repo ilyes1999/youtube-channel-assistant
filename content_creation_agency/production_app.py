@@ -60,13 +60,28 @@ def process_request(user_input, history):
         # Use the agency's demo_gradio method for processing
         response = agency.demo_gradio(user_input, history)
         
+        # Convert response to messages format
+        if isinstance(response, list):
+            messages = []
+            for item in response:
+                if isinstance(item, tuple) and len(item) == 2:
+                    # Convert tuple (user, assistant) to message format
+                    messages.append({"role": "user", "content": item[0]})
+                    messages.append({"role": "assistant", "content": item[1]})
+                elif isinstance(item, dict) and "role" in item and "content" in item:
+                    # Already in correct format
+                    messages.append(item)
+            return messages
+        else:
+            # Single response - create message format
+            return [{"role": "user", "content": user_input}, {"role": "assistant", "content": str(response)}]
+        
         logger.info("Request processed successfully")
-        return response
         
     except Exception as e:
         error_msg = f"Error processing request: {str(e)}"
         logger.error(error_msg)
-        return error_msg
+        return [{"role": "user", "content": user_input}, {"role": "assistant", "content": error_msg}]
 
 def clear_chat():
     """Clear the chat history"""
@@ -102,7 +117,8 @@ with gr.Blocks(
     chatbot = gr.Chatbot(
         height=600,
         show_label=False,
-        container=True
+        container=True,
+        type="messages"
     )
     
     with gr.Row():
