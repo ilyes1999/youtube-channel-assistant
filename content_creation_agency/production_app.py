@@ -39,11 +39,12 @@ from content_creation_agency.agency import agency
 load_dotenv()
 
 # Configure logging
+log_file_path = os.path.join(temp_dir, 'agency.log')
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('agency.log'),
+        logging.FileHandler(log_file_path),
         logging.StreamHandler()
     ]
 )
