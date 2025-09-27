@@ -68,6 +68,10 @@ def process_request(user_input, history):
         logger.error(error_msg)
         return error_msg
 
+def clear_chat():
+    """Clear the chat history"""
+    return None
+
 # Create the Gradio interface
 with gr.Blocks(
     title="Content Creation Agency",
@@ -99,7 +103,7 @@ with gr.Blocks(
         height=600,
         show_label=False,
         container=True,
-        bubble_full_width=False
+        type="messages"
     )
     
     with gr.Row():
@@ -126,18 +130,16 @@ with gr.Blocks(
     submit_btn.click(
         fn=process_request,
         inputs=[msg, chatbot],
-        outputs=[chatbot],
-        clear_input=True
+        outputs=[chatbot]
     )
     
     msg.submit(
         fn=process_request,
         inputs=[msg, chatbot],
-        outputs=[chatbot],
-        clear_input=True
+        outputs=[chatbot]
     )
     
-    clear_btn.click(lambda: None, None, chatbot, queue=False)
+    clear_btn.click(clear_chat, None, chatbot, queue=False)
 
 if __name__ == "__main__":
     # Get port from environment variable (Render provides this)
